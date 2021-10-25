@@ -1,0 +1,28 @@
+{
+    "headers": {
+        "0":"id",
+        "1":"type",
+        "2":"name", 
+        "3":"quantity"
+    },
+    "data":[
+        {
+            "id": "0001",
+            "type": "donut",
+            "name": "Cake",
+            "quantity": "50"
+        },
+        {
+            "id": "0002",
+            "type": "iceCream",
+            "name": "chocolate_ice_cream",
+            "quantity": "75"
+        },
+        {
+            "id": "0003",
+            "type": "muffin",
+            "name": "muffin_cake",
+            "quantity": "25"
+        }
+    ]
+}

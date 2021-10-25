@@ -1,0 +1,21 @@
+.titulo1{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: blanchedalmond;
+    background-color: tomato;
+}
+.titulo2{
+    font-family: Arial, Helvetica, sans-serif;
+    color: pink;
+    width: 100%;
+    background-color: chocolate;
+}
+.parrafo1{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: aquamarine;
+    width: 100%;
+    background-color: darkred;
+}
+.parrafo2{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    background-color: aqua;
+}

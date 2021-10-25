@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block body %}
+  <div class = "container shadow-lg rounded">
+    <img src = "{{image_file}}" class="rounded-circle z-depth-2" width="250" height="250"/>
+    <h4>
+      Informacion Personal: 
+    </h4>
+    <h5>
+      Nombre: {{my_data["informacion_personal"]["nombre_completo"]}}
+      <br>
+      Pais de Nacimiento: {{my_data["informacion_personal"]["pais_de_nacimiento"]}}
+      <br>
+      Edad: {{my_data["informacion_personal"]["edad"]}}
+      <br>
+      <p class = "blockquote text-center">
+        "{{my_data["informacion_personal"]["acerca_de_mi"]}}"
+      </p>
+      <br>
+      Lenguas:
+    </h5>
+    <ol>
+      {% for n in my_data["informacion_personal"]["idiomas"] %}
+        <li> {{n}} </li>
+      {% endfor %}
+    </ol>
+    <h4>
+      Informacion Profesional:
+    </h4>
+    <h5>
+      Estudiante de: {{my_data["informacion_profesional"]["educacion"]}}
+      <br>
+      Conocimiento en las siguientes tecnologias:
+      <br>
+      <ul>
+        {% for n in my_data["informacion_profesional"]["tecnologias"] %}
+          <li> {{n}} </li>
+        {% endfor %}
+      </ul>
+    </h5>
+    <h4>
+      Referencias:
+    </h4>
+    <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Laborales</th>
+          <th scope="col">Personales</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">1</th>
+          <td>{{my_data["informacion_referencias"]["referencias_laborales"][0]}}</td>
+          <td>{{my_data["informacion_referencias"]["referencia_personal"][0]}}</td>
+        </tr>
+        <tr>
+          <th scope="row">2</th>
+          <td>{{my_data["informacion_referencias"]["referencias_laborales"][1]}}</td>
+          <td>{{my_data["informacion_referencias"]["referencia_personal"][1]}}</td>
+        </tr>
+        <tr>
+          <th scope="row">3</th>
+          <td>{{my_data["informacion_referencias"]["referencias_laborales"][2]}}</td>
+          <td>{{my_data["informacion_referencias"]["referencia_personal"][2]}}</td>
+        </tr>
+        <tr>
+          <th scope="row">4</th>
+          <td>{{my_data["informacion_referencias"]["referencias_laborales"][3]}}</td>
+          <td>{{my_data["informacion_referencias"]["referencia_personal"][3]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+{% endblock %}

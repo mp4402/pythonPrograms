@@ -1,0 +1,45 @@
+--- # MiniProyecto CV
+fotografia: avatar.jpg
+informacion_pagina:
+    autor: Mario Pisquiy
+    titulo: Mi CV
+informacion_personal:
+    nombre_completo: Mario Enrique Pisquiy Gomez
+    pais_de_nacimiento: Guatemala
+    idiomas:
+        - Español
+        - Ingles
+    edad: 18
+    acerca_de_mi: Me fascina todo aquello que tiene que ver con la tecnologia. Soy un amante profundo de la musica y los videojuegos.
+    experiencia: Software Engineer
+    intereses:
+        - Videojuegos
+        - Musica
+        - Programacion
+        - Animacion
+        - Matematicas
+informacion_profesional:
+    tecnologias: 
+        - Python
+        - Java
+        - MySql
+        - Visual Basic
+    educacion: Universidad Francisco Marroquín
+informacion_referencias:
+    referencias_laborales: 
+        - Oficina Centro Credito Banco Industrial
+        - Club Alcores
+        - Almacen Caribe
+        -
+    referencia_personal: 
+        - Anibal Gómez
+        - Leonel Martinez
+        - Javier Arana
+        - Eduardo Rubio
+links:
+    GitHub: https://github.com/mp4402
+    Facebook: https://www.facebook.com/mario.pisquiy/
+    Instagram: https://www.instagram.com/pisquiy_.g/
+    Twitter: https://twitter.com/MarioPisquiy
+    YouTube: https://www.youtube.com/channel/UCYzivNW_g8QU5J6A7yAPdHQ
+    Spotify: https://open.spotify.com/user/31ham73sxj2wpy4jvrbkcdgwf5qq?si=X48-zjC2QGS70hQm2Kxzig&utm_source=copy-link

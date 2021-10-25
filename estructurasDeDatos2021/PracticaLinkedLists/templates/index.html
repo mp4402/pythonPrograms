@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block body %}
+<form method="POST" action="">
+    <div class="form-group">
+        <div>
+            <h3>Ahora está sonando: </h3>
+            <h3>{{nombreCancion}}</h3>
+            <p class="lead"><h5>{{nombreArtista}}, {{nombreAlbum}}</h5></p>
+        </div>
+        <div>
+            <button type="submit" name="Play Now" value="Play Now" class="btn btn-primary">Play Now</button>
+            <button type="submit" name="Play Next" value="Play Next" class="btn btn-secondary btn-dark">Play Next</button>
+            <button type="submit" name="Play Previous" value="Play Previous" class="btn btn-secondary btn-dark">Play Previous</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block body %}
+<form method="POST" action = "">
+    <div class="form-group">
+       
+        <p>Ingrese el nombe, artista y álbum de la canción</p>
+        <div>
+            <input type="text" class="form-control" name="var1" placeholder="Nombre de la Canción" >
+            <input type="text" class="form-control" name="var2" placeholder="Nombre del Artista">
+            <input type="text" class="form-control" name="var3" placeholder="Nombre del Álbum" >
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Añadir canción</button>
+        </div>
+    </div>
+</form>
+{% endblock %}

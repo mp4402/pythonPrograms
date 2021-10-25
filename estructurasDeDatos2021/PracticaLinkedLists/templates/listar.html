@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+{% block body %}
+    <table class="table">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Nombre</th>
+                <th scope="col">Artista</th>
+                <th scope="col">Album</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for x in my_list %}
+                <tr>
+                    <th scope="col">{{x.nombre}}</th>  
+                    <th scope="col">{{x.artista}}</th>
+                    <th scope="col">{{x.album}}</th> 
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
