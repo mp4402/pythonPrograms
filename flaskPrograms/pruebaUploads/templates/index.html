@@ -1,6 +1,11 @@
 <!doctype html>
 <html>
     <title>Upload new File</title>
+    {% if mensaje != "" %}
+      <script>
+        alert("{{mensaje}}");
+      </script>
+    {% endif %}
     <h1>Upload new File</h1>
     <form method=post enctype=multipart/form-data>
       <input type=file name=file value=Archivo>
