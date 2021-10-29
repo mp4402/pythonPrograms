@@ -1,5 +1,5 @@
 import os
-from flask import Flask, flash, request, redirect, url_for
+from flask import Flask, request
 from werkzeug.utils import secure_filename
 from jinja2 import FileSystemLoader, Environment
 
@@ -18,24 +18,20 @@ def allowed_file(filename):
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     template = env.get_template('index.html')
-    error = None
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
-            flash('No file part')
             return template.render()
         file = request.files['file']
         # If the user does not select a file, the browser submits an
         # empty file without a filename.
         if file.filename == '':
-            error = 'No se seleccionó ningua imagen'
-            return template.render()
+            return template.render(mensaje="No se seleccionó ninguna imagen")
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            flash('Imagen cargada correctamente')
-            return template.render()
-    return template.render(error = error)
+            return template.render(mensaje="Imagen subida correctamente")
+    return template.render(mensaje="")
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True)
