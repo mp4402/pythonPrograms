@@ -48,4 +48,4 @@ plt.fill([x1,x2,x3],[y1,y2,y3],'red',alpha=0.5)
 
 plt.grid()                          
 plt.savefig("grafica.png")          
-plt.show()                          
+plt.show()            
