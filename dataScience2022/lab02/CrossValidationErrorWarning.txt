@@ -1,0 +1,7 @@
+To avoid warnings or errors when splitting a dataset in Python, you just need to replace the following line:
+
+from:
+sklearn.cross_validation import train_test_split 
+
+to:
+sklearn.model_selection import train_test_split
