@@ -37,23 +37,29 @@ intersecciones = {}
 contadorIntersecciones = 0
 
 #Se encuentran las intersecciones, entre las funciones y con los ejes x & y
-x = range(-5,50)
+x = range(-100,100)
 x = Symbol('x')
-if(funcionesRestrictivas[0][2] > 0 and funcionesRestrictivas[1][2] > 0):              
+if(funcionesRestrictivas[0][2] > 0 and funcionesRestrictivas[1][2] > 0):           
     x1, =  solve(f1(x)-f2(x))
     y1 = f1(x1)
     intersecciones[contadorIntersecciones] = [x1,y1]
     contadorIntersecciones+=1
 if(funcionesRestrictivas[1][2] > 0 and funcionesRestrictivas[2][2] > 0):
-    x2, =  solve(f1(x)-f3(x))           
-    y2 = f1(x2)
-    intersecciones[contadorIntersecciones] = [x2,y2]
-    contadorIntersecciones+=1
+    try:
+        x2, =  solve(f1(x)-f3(x))           
+        y2 = f1(x2)
+        intersecciones[contadorIntersecciones] = [x2,y2]
+        contadorIntersecciones+=1
+    except:
+        pass
 if(funcionesRestrictivas[1][2] > 0 and funcionesRestrictivas[2][2] > 0):
-    x3, =  solve(f2(x)-f3(x))                                       
-    y3 = f2(x3)
-    intersecciones[contadorIntersecciones] = [x3,y3]
-    contadorIntersecciones+=1
+    try:
+        x3, =  solve(f2(x)-f3(x))                                       
+        y3 = f2(x3)
+        intersecciones[contadorIntersecciones] = [x3,y3]
+        contadorIntersecciones+=1
+    except:
+        pass
 if(funcionesRestrictivas[0][0] > 0):
     x4 = funcionesRestrictivas[0][2]/funcionesRestrictivas[0][0]
     y4 = 0
