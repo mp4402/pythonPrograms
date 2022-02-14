@@ -29,12 +29,25 @@ def encontrarValoresFinales(funciones,i):
     indiceSolucion = []
     for x in range(i):
         indice = np.where(funciones[:,x] == 1)
-        indiceSolucion.append(indice[0][0])
+        print(type(indice))
+        if not indice[0]:
+            indiceSolucion.append(-1)
+        else:
+            indiceSolucion.append(indice[0][0])
     return indiceSolucion
 
+opcion = 0
 funcionObjetivo = []
 variables = []
 numeroVariables = int(input("Ingrese el número de variables con las que se trabajará: "))
+condicion = False
+
+while(condicion == False):
+    try:
+        opcion = int(input("Elija si el problema es de maximización o de minimización\n1. Minimización\n2. Maximización\n"))
+        condicion = True
+    except:
+        print("Seleccione una opción valida")
 
 for i in range(numeroVariables):
     variables.append(str(input("Ingrese el nombre de la variable (texto): ")))
@@ -48,9 +61,15 @@ for i in range(numeroRestrictivas):
         if j == numeroVariables+1:
             funcionesRestrictivas[i][j] = float(input("Ingrese el valor restrictivo de la función: "))
         elif j == numeroVariables:
-            funcionesRestrictivas[i][j] = float(input("Ingrese el signo restrictivo de la función\n0. =\n1. >=\n2. <=\n"))
+            condicion = False
+            while(condicion == False):
+                try:
+                    funcionesRestrictivas[i][j] = float(input("Ingrese el signo restrictivo de la función\n0. =\n1. >=\n2. <=\n"))
+                    condicion = True
+                except:
+                    print("Ingrese una opcion valida")
         else:
-            funcionesRestrictivas[i][j] = float(input("Ingrese el valor de la variable " + variables[j] + " de la función: "))
+            funcionesRestrictivas[i][j] = float(input("Ingrese el valor de la variable " + variables[j] + " de la función restrictiva " + str(i) + " : "))
 
 funciones = [[0 for x in range(numeroVariables+numeroRestrictivas+3)] for y in range(numeroRestrictivas + 1)]
 
@@ -59,7 +78,10 @@ for i in range(numeroRestrictivas+1):
     if i == 0:
         posicionVariable = j-1
         for j in range(numeroVariables):
-            funciones[i][j] = (funcionObjetivo[j]*-1)
+            if opcion == 1:
+                funciones[i][j] = funcionObjetivo[j]
+            else:
+                funciones[i][j] = (funcionObjetivo[j]*-1)
         funciones[i][posicionVariable] = 1
         funciones[i][numeroVariables+numeroRestrictivas+1] = 0
     else:
@@ -97,8 +119,14 @@ indicesSolucion = encontrarValoresFinales(funciones,numeroVariables)
 soluciones = []
 solucion = "La producción debe ser: "
 for i in indicesSolucion:
-    soluciones.append(funciones[i,numeroVariables+numeroRestrictivas+1])
+    if i == -1:
+        soluciones.append(0)
+    else: 
+        soluciones.append(funciones[i,numeroVariables+numeroRestrictivas+1])
 for i in range(numeroVariables):
     solucion += str(soluciones[i]) + " unidades de la variable " + variables[i] + " "
-
 print(solucion)
+if opcion == 1:
+    print("El mínimo es: " + str((funciones[0,numeroVariables+numeroRestrictivas+1]*-1)))
+else:
+    print("El máximo es: " + str((funciones[0,numeroVariables+numeroRestrictivas+1])))
