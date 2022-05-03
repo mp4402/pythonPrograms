@@ -20,14 +20,15 @@ def negativoMenor(funciones):
 
 #Método utilizado para encontrar la que será la fila pivote
 def encontrarPivote(funciones,indice):
-    posiblesPivote = funciones[:,indice]
-    posiblesPivote[0] = 0
-    boolArr = posiblesPivote > 0
-    newArr = posiblesPivote[boolArr]
-    newArr = posiblesPivote[posiblesPivote > 0]
-    pivote = np.amin(newArr)
-    indicePivote = np.where(funciones[:,indice] == pivote)
-    indicePivote = indicePivote[0][0]
+    filaPivotes = funciones[:,indice]
+    posiblePivote = []
+    indicePivote = 0
+    for i in filaPivotes:
+      if i > 0:
+        posiblePivote.append(i)
+    for j in posiblePivote:
+      if j > indicePivote:
+        indicePivote = j
     return indicePivote
     
 #Método utilizado para encontrar los indices de las filas donde se encuentran las respuestas para los problemas de maximización
@@ -188,7 +189,8 @@ for i in range(numeroRestrictivas+1):
             variables.append("s"+str(contadorHolgura))
             contadorHolgura+=1
         if opcion == 2:
-            funciones[i][numeroVariables+numeroRestrictivas+1] = funcionObjetivo[i-1]
+            if i < numeroVariables:
+                funciones[i][numeroVariables+numeroRestrictivas+1] = funcionObjetivo[i-1]
         else:
             funciones[i][numeroVariables+numeroRestrictivas+1] = funcionesRestrictivas[i-1][numeroVariables+1] 
 
@@ -228,10 +230,11 @@ while(encontrarNegativos(funciones, numeroVariables+numeroRestrictivas) != False
                 #Reducimos la columna a 0
                 funciones[i]=funciones[i]+(multiplicando*funciones[indicePivote])
     #Actualizamos el dataframe e imprimimos los resultados
-    df = pd.DataFrame(funciones,columns=variables)
+    #df = pd.DataFrame(funciones,columns=variables)
     time.sleep(1)
     print("\n")
-    print(tabulate(df,headers=variables))
+    #print(tabulate(df,headers=variables))
+    print(funciones)
 
 #Inicializamos el array para los valores de la respuesta y el string que exprese la respuesta final
 soluciones = []
