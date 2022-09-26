@@ -1,0 +1,39 @@
+stack1(S0) <- stack de estados
+stack2($) <- stack de tokens
+
+
+if posicionEntrada == 1{
+    add token to stack2
+    add state to stack1
+}else{
+    if posicionEntrada.next is not Nothing{
+        add token to stack2
+        add state to stack1
+        if state(token) is "SHIFTTO"{
+            list(key) = token
+        }
+        if state(token) is "GOTO"{
+            list(key) = token
+        }
+        if state(token) is "REDUCE"{
+            switch(valor):
+                case(2){
+                    out last_token of stack2
+                    add "E" to stack2
+                    out last_state of stack1
+                    list(key) = last_state of stack1
+                }
+                case(3){
+                    out last_5_token of stack2
+                    add "E" to stack2
+                    out last_state of stack1
+                }
+        }
+    }else{
+        if Stack1(last_state).next is "ACCEPT"{
+            output("input valido")
+        } else{
+            output("input no valido")
+        }
+    }
+}
