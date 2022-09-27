@@ -191,20 +191,6 @@ def recorrer(texto, key, puntero):
 #        lista.AtEnd("Error", texto[inicio:inicio+1], 1, inicio)
 #        return (inicio+1)
 
-def check_reduce(key):
-    global estados,producciones,dict
-    if(key[6:7]=='2'):
-        for i in range(4):
-            producciones.pop()
-            estados.pop()
-        producciones.push("E")
-        key = dict[estados.peek()][producciones.peek()]
-    if(key[6:7]=='3'):
-        producciones.pop()
-        producciones.push("E")
-        estados.pop()
-        key = dict[estados.peek()][producciones.peek()]
-    return key
 
 #Funcion principal que agrupa todas las funciones
 def main():
@@ -213,7 +199,7 @@ def main():
     key = 'S0'
     llave = 0
     #El texto que se va a evaluar
-    texto = "int+(int)+(int)$"
+    texto = "int+(E)+(int)$"
     texto_tamaño = len(texto)
     while (llave == 0):
         #funcion para recorrer el diccionario
