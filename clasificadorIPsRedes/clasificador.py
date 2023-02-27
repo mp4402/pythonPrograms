@@ -15,12 +15,21 @@ tipo = ""
 clase = ""
 
 posPunto = encontrarPunto(IP)
-octeto1 = IP[0:posPunto]
-IP = recortarIP(IP, posPunto)
+print(posPunto)
+if posPunto != -1:
+    octeto1 = IP[0:posPunto]
+    IP = recortarIP(IP, posPunto)
+else:
+    print("Ingrese una IP valida")
+    raise SystemExit()
 
 posPunto = encontrarPunto(IP)
-octeto2 = IP[0:posPunto]
-IP = recortarIP(IP, posPunto)
+if posPunto != -1:
+    octeto2 = IP[0:posPunto]
+    IP = recortarIP(IP, posPunto)
+else:
+    print("Ingrese una IP valida")
+    raise SystemExit()
 
 if int(octeto1) >= 0 and int(octeto1) <= 126:
     tipo = "Publica"
