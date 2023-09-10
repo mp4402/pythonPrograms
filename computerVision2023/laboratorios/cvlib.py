@@ -117,3 +117,20 @@ def imgeq(img):
             cdf_eq.append(0)
     eq = cv.LUT(img, np.array(cdf_eq).astype(np.uint8))
     return eq
+
+def imgnorm(img):
+    """Nomalize an image
+    Args:
+        img (numpy array): Source image
+    Returns:
+        normalized (numpy array): Nomalized image
+    """
+    vmin, vmax = img.min(), img.max()
+    normalized_values = []
+    delta = vmax-vmin
+
+    for p in img.ravel():
+        normalized_values.append(255*(p-vmin)/delta)
+
+    normalized  = np.array(normalized_values).astype(np.uint8).reshape(img.shape[0],-1)
+    return normalized
