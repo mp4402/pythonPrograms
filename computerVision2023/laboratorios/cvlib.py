@@ -22,7 +22,7 @@ def hist(img):
 
     plt.plot()
 
-def imgview(img, k = 13):
+def imgview(img, filename = None, k = 13):
     fig,ax1 = plt.subplots(figsize=(k,k))
     
     if len(img.shape)==2:
@@ -30,6 +30,10 @@ def imgview(img, k = 13):
     else:
         ax1.imshow(img) 
     plt.axis('off')
+
+    if filename != None:
+        plt.savefig(filename)
+
     plt.show()
 
 def imgcmp(img1, img2, titles = None):
