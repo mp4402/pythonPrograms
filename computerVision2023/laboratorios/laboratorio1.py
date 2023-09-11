@@ -1,8 +1,9 @@
+#Mario Enrique Pisquiy Gómez
+#Carné 20200399
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2 as cv
 import errno
-import cvlib
 import sys
 import io
 
@@ -62,6 +63,27 @@ def imgpad(img, r):
         
     return newImage
 
+def imgview(img, filename = None, k = 13):
+    """Función utilizada para visualizar una imagen (original de cvlib, utilizada de esta forma para no depender de ese módulo)
+
+    Args:
+        img (np.ndarray): imagen que se desea visualizar 
+        filename (str, optional): nombre con el que se desea guardar la imagen. Defaults to None.
+        k (int, optional): tamaño de la imagen. Defaults to 13.
+    """
+    fig,ax1 = plt.subplots(figsize=(k,k))
+    
+    if len(img.shape)==2:
+        ax1.imshow(img, vmin=0, vmax=255, cmap='gray')
+    else:
+        ax1.imshow(img) 
+    plt.axis('off')
+
+    if filename != None:
+        plt.savefig(filename)
+
+    plt.show()
+
 class UnionFind:
     """clase utilizada para encontrar los padres de cada estructura (disjoint structures)
     """
@@ -120,7 +142,7 @@ def neighbor(row,column,label):
     Args:
         row (int): fila en la que se encuentra el indice
         column (int): columna en la que se encuentra el indice
-        label (np.np.ndarray): matriz de la imagen que se está procesando
+        label (np.ndarray): matriz de la imagen que se está procesando
 
     Returns:
         list: lista con los valores de los vecinos del elemento de la imagen
@@ -215,14 +237,16 @@ def labelview(img,filename = None, size=13):
     img_res = np.array(img_res)
 
     if filename is not None: 
-        cvlib.imgview(img_res, filename = filename)
+        imgview(img_res, filename = filename)
     else:
-        cvlib.imgview(img_res,k=size)
+        imgview(img_res,k=size)
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print("""You must write the name of the image and the output name:
-        For example: python laboratorio_1.py image_name.pgm output_name.png""")
+        print("""
+        You must write the name of the image and the output name:
+        For example: python laboratorio_1.py image_name.pgm output_name.png
+        """)
         sys.exit()
     im = cv.imread(sys.argv[1], cv.IMREAD_COLOR)
     img = cv.cvtColor(im, cv.COLOR_RGB2GRAY)

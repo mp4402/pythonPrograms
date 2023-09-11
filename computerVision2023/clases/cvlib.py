@@ -1,6 +1,6 @@
-import cv2 as cv
 import matplotlib.pyplot as plt
 import numpy as np
+import cv2 as cv
 import os
 
 def hist(img):
@@ -21,19 +21,20 @@ def hist(img):
     ax2.plot(histr, c="white",linewidth=0.6)
 
     plt.plot()
+
+def imgview(img, filename = None, k = 13):
+    fig,ax1 = plt.subplots(figsize=(k,k))
     
-def imgview(img):
-    k=13
-    fig = plt.figure(figsize=(k,k))
-    ax1 = fig.add_subplot(2,2,1)
-
-    if (len(img.shape)>2):
-        ax1.imshow(img)
+    if len(img.shape)==2:
+        ax1.imshow(img, vmin=0, vmax=255, cmap='gray')
     else:
-        ax1.imshow(img,cmap='gray',vmin=0,vmax=255)
-
+        ax1.imshow(img) 
     plt.axis('off')
-    plt.plot()
+
+    if filename != None:
+        plt.savefig(filename)
+
+    plt.show()
 
 def imgcmp(img1, img2, titles = None):
     if titles == None:
@@ -120,3 +121,20 @@ def imgeq(img):
             cdf_eq.append(0)
     eq = cv.LUT(img, np.array(cdf_eq).astype(np.uint8))
     return eq
+
+def imgnorm(img):
+    """Nomalize an image
+    Args:
+        img (numpy array): Source image
+    Returns:
+        normalized (numpy array): Nomalized image
+    """
+    vmin, vmax = img.min(), img.max()
+    normalized_values = []
+    delta = vmax-vmin
+
+    for p in img.ravel():
+        normalized_values.append(255*(p-vmin)/delta)
+
+    normalized  = np.array(normalized_values).astype(np.uint8).reshape(img.shape[0],-1)
+    return normalized
