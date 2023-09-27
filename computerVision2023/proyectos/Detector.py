@@ -24,11 +24,8 @@ def encontrarPlaca(image):
     extent = 0
 
     for c in contours:
-        percent =0.052
-        epsilon = percent*cv.arcLength(c,True)
-        approx = cv.approxPolyDP(c,epsilon,True)
         x,y,w,h = cv.boundingRect(c)
-        area = cv.contourArea(approx)
+        area = cv.contourArea(c)
         if (w>h and area > 4000):
             rect_area = w*h
             extent1 = float(area)/rect_area
@@ -46,11 +43,8 @@ def encontrarNumeros(image):
     extent = 0
 
     for c in contours:
-        percent =0.052
-        epsilon = percent*cv.arcLength(c,True)
-        approx = cv.approxPolyDP(c,epsilon,True)
         x,y,w,h = cv.boundingRect(c)
-        area = cv.contourArea(approx)
+        area = cv.contourArea(c)
         if (w<h and area > 300): 
             contorno.append(c)
 
