@@ -1,7 +1,9 @@
+from collections import OrderedDict
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2 as cv
 import argparse
+import pickle
 import cvlib
 import errno
 import io
@@ -29,6 +31,12 @@ def encontrarContornos(image):
     contours, hierarchy = cv.findContours(image, mode, method[0])
     return contours
 
+def binarizarPlaca(image):
+    imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    normalized = imgnorm(imgray)
+    binarized = cv.adaptiveThreshold(normalized, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY,127,0)
+    return binarized
+
 def encontrarPlaca(image):
     imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     normalized = imgnorm(imgray)
@@ -53,19 +61,15 @@ def encontrarPlaca(image):
                 caracteristicas = [x,y,w,h]
                 
     placa = im[caracteristicas[1]:caracteristicas[1]+caracteristicas[3],caracteristicas[0]:caracteristicas[0]+caracteristicas[2]]
-    return placa
+    return placa, caracteristicas
 
 def encontrarNumeros(image):
-    imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    normalized = imgnorm(imgray)
-    binarized = cv.adaptiveThreshold(normalized, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY,127,0)
-    cvlib.imgview(binarized)
-    contours = encontrarContornos(binarized)
+    contours = encontrarContornos(image)
     contorno = []
     extent = 0
     direcciones_y = {}
     tamaño_placa = placa.shape
-    area_min = tamaño_placa[0] * tamaño_placa[1] * 0.008
+    area_min = tamaño_placa[0] * tamaño_placa[1] * 0.0045
 
     for c in contours:
         percent =0.052
@@ -83,12 +87,20 @@ def encontrarNumeros(image):
                 direcciones_y[y-2].append([x,y,w,h,len(contorno)-1])
             elif ((y-3) in direcciones_y):
                 direcciones_y[y-3].append([x,y,w,h,len(contorno)-1])
+            elif ((y-4) in direcciones_y):
+                direcciones_y[y-4].append([x,y,w,h,len(contorno)-1])
+            elif ((y-5) in direcciones_y):
+                direcciones_y[y-5].append([x,y,w,h,len(contorno)-1])
             elif ((y+1) in direcciones_y):
                 direcciones_y[y+1].append([x,y,w,h,len(contorno)-1])
             elif ((y+2) in direcciones_y):
                 direcciones_y[y+2].append([x,y,w,h,len(contorno)-1])
             elif ((y+3) in direcciones_y):
                 direcciones_y[y+3].append([x,y,w,h,len(contorno)-1])
+            elif ((y+4) in direcciones_y):
+                direcciones_y[y+4].append([x,y,w,h,len(contorno)-1])
+            elif ((y+3) in direcciones_y):
+                direcciones_y[y+5].append([x,y,w,h,len(contorno)-1])
             else:
                 direcciones_y[y] = [[x,y,w,h,len(contorno)-1]]
 
@@ -100,19 +112,61 @@ def encontrarNumeros(image):
                 contorno.pop(int(element[4]-eliminados))
                 keys.append(key)
                 eliminados = eliminados + 1
-    for key in keys:
-        direcciones_y.pop(key)
 
-    return contorno
+    if len(direcciones_y) > 1:
+        for i in direcciones_y:
+            if len(direcciones_y[i]) < 3:
+                keys.append(i)
+                
+    for key in keys:
+        if (key in direcciones_y):
+            direcciones_y.pop(key)
+
+    direcciones_y = OrderedDict(sorted(direcciones_y.items()))
+
+    for i in direcciones_y:
+        direcciones_y[i] = sorted(direcciones_y[i], key=lambda x: x[0])
+
+
+    return direcciones_y
+
+def modelo(numeros):
+    characters = []
+    resultado = ""
+    for keys, values in numeros.items(): 
+        for i in values:
+            character =  placaBinarized[i[1]:i[1]+i[3],i[0]:i[0]+i[2]]
+            res = cv.resize(character, dsize=(75, 100), interpolation=cv.INTER_LANCZOS4)
+            res_flatten = res.flatten()
+            characters.append(res_flatten)
+    result = loaded_model.predict(characters)
+    
+    for x in result: 
+        resultado += x
+    
+    return resultado
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--p", type=str, required=True,
         help="path to image plot")
     args = vars(ap.parse_args())
+    
     color = (0,255,0)
+    loaded_model = pickle.load(open('modelo.sav', 'rb'))
 
     im = cv.imread(args["p"], cv.IMREAD_COLOR)
-    placa = encontrarPlaca(im)
-    numeros = encontrarNumeros(placa)
-    cvlib.imgview(cv.drawContours(placa.copy(), numeros, -1, color, 1))
+    placa, caracteristicas = encontrarPlaca(im)
+    placaBinarized = binarizarPlaca(placa)
+    numeros = encontrarNumeros(placaBinarized)
+    resultado = modelo(numeros)
+
+    print("La placa es: " + str(resultado))
+
+    font = cv.FONT_HERSHEY_SIMPLEX
+    org = (caracteristicas[0], caracteristicas[1]-10)
+    fontScale = 1.5
+    thickness = 2
+    im = cv.putText(im, resultado, org, font, fontScale, color, thickness, cv.LINE_AA)
+    cv.rectangle(im, (caracteristicas[0], caracteristicas[1]), (caracteristicas[0]+caracteristicas[2], caracteristicas[1]+caracteristicas[3]), color, 3)
+    cvlib.imgview(im)
