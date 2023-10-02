@@ -6,6 +6,7 @@ import argparse
 import pickle
 import cvlib
 import errno
+import sys
 import io
 
 def imgnorm(img):
@@ -59,8 +60,11 @@ def encontrarPlaca(image):
                 extent = extent1
                 contorno = c
                 caracteristicas = [x,y,w,h]
-                
-    placa = im[caracteristicas[1]:caracteristicas[1]+caracteristicas[3],caracteristicas[0]:caracteristicas[0]+caracteristicas[2]]
+    if len(caracteristicas) > 0:
+        placa = image[caracteristicas[1]:caracteristicas[1]+caracteristicas[3],caracteristicas[0]:caracteristicas[0]+caracteristicas[2]]
+    else:
+        print("No se pudo obtener la placa")
+        placa = im
     return placa, caracteristicas
 
 def encontrarNumeros(image):
@@ -130,12 +134,12 @@ def encontrarNumeros(image):
 
     return direcciones_y
 
-def modelo(numeros):
+def modelo(placa, numeros):
     characters = []
     resultado = ""
     for keys, values in numeros.items(): 
         for i in values:
-            character =  placaBinarized[i[1]:i[1]+i[3],i[0]:i[0]+i[2]]
+            character =  placa[i[1]:i[1]+i[3],i[0]:i[0]+i[2]]
             res = cv.resize(character, dsize=(75, 100), interpolation=cv.INTER_LANCZOS4)
             res_flatten = res.flatten()
             characters.append(res_flatten)
@@ -146,20 +150,8 @@ def modelo(numeros):
     
     return resultado
 
-if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--p", type=str, required=True,
-        help="path to image plot")
-    args = vars(ap.parse_args())
-    
+def mostrarPlaca(image, resultado):
     color = (0,255,0)
-    loaded_model = pickle.load(open('modelo.sav', 'rb'))
-
-    im = cv.imread(args["p"], cv.IMREAD_COLOR)
-    placa, caracteristicas = encontrarPlaca(im)
-    placaBinarized = binarizarPlaca(placa)
-    numeros = encontrarNumeros(placaBinarized)
-    resultado = modelo(numeros)
 
     print("La placa es: " + str(resultado))
 
@@ -167,6 +159,24 @@ if __name__ == "__main__":
     org = (caracteristicas[0], caracteristicas[1]-10)
     fontScale = 1.5
     thickness = 2
-    im = cv.putText(im, resultado, org, font, fontScale, color, thickness, cv.LINE_AA)
-    cv.rectangle(im, (caracteristicas[0], caracteristicas[1]), (caracteristicas[0]+caracteristicas[2], caracteristicas[1]+caracteristicas[3]), color, 3)
-    cvlib.imgview(im)
+    image = cv.putText(image, resultado, org, font, fontScale, color, thickness, cv.LINE_AA)
+    cv.rectangle(image, (caracteristicas[0], caracteristicas[1]), (caracteristicas[0]+caracteristicas[2], caracteristicas[1]+caracteristicas[3]), color, 3)
+    cvlib.imgview(image)
+
+if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--p", type=str, required=True,
+        help="path to image plot")
+    args = vars(ap.parse_args())
+    
+    loaded_model = pickle.load(open('modelo.sav', 'rb'))
+
+    im = cv.imread(args["p"], cv.IMREAD_COLOR)
+    im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
+    placa, caracteristicas = encontrarPlaca(im)
+    if len(caracteristicas) == 0:
+        sys.exit()
+    placaBinarized = binarizarPlaca(placa)
+    numeros = encontrarNumeros(placaBinarized)
+    resultado = modelo(placaBinarized, numeros)
+    mostrarPlaca(im, resultado)
