@@ -4,10 +4,23 @@ import numpy as np
 import cv2 as cv
 import argparse
 import pickle
-import cvlib
 import errno
 import sys
 import io
+
+def imgview(img, filename = None, k = 13):
+    fig,ax1 = plt.subplots(figsize=(k,k))
+    
+    if len(img.shape)==2:
+        ax1.imshow(img, vmin=0, vmax=255, cmap='gray')
+    else:
+        ax1.imshow(img) 
+    plt.axis('off')
+
+    if filename != None:
+        plt.savefig(filename)
+
+    plt.show()
 
 def imgnorm(img):
     """Nomalize an image
@@ -74,6 +87,7 @@ def encontrarNumeros(image):
     direcciones_y = {}
     tamaño_placa = placa.shape
     area_min = tamaño_placa[0] * tamaño_placa[1] * 0.0045
+    altura_min = tamaño_placa[0] * 0.55
 
     for c in contours:
         percent =0.052
@@ -81,7 +95,7 @@ def encontrarNumeros(image):
         approx = cv.approxPolyDP(c,epsilon,True)
         x,y,w,h = cv.boundingRect(c)
         area = cv.contourArea(approx)
-        if (w<h and area > area_min):
+        if (w<h and area > area_min and h > altura_min):
             contorno.append(c)
             if (y in direcciones_y):
                 direcciones_y[y].append([x,y,w,h,len(contorno)-1])
@@ -137,6 +151,12 @@ def encontrarNumeros(image):
 def modelo(placa, numeros):
     characters = []
     resultado = ""
+    linea_placa = list(placa[int(caracteristicas[3]/2),:])
+    count_negro = linea_placa.count(0)
+    count_blanco = linea_placa.count(255)
+    if count_negro > count_blanco:
+        placa = cv.threshold(placa,0,255, cv.THRESH_BINARY_INV)[1]
+
     for keys, values in numeros.items(): 
         for i in values:
             character =  placa[i[1]:i[1]+i[3],i[0]:i[0]+i[2]]
@@ -161,7 +181,7 @@ def mostrarPlaca(image, resultado):
     thickness = 2
     image = cv.putText(image, resultado, org, font, fontScale, color, thickness, cv.LINE_AA)
     cv.rectangle(image, (caracteristicas[0], caracteristicas[1]), (caracteristicas[0]+caracteristicas[2], caracteristicas[1]+caracteristicas[3]), color, 3)
-    cvlib.imgview(image)
+    imgview(image)
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -178,5 +198,9 @@ if __name__ == "__main__":
         sys.exit()
     placaBinarized = binarizarPlaca(placa)
     numeros = encontrarNumeros(placaBinarized)
-    resultado = modelo(placaBinarized, numeros)
-    mostrarPlaca(im, resultado)
+    if len(numeros) > 0:
+        resultado = modelo(placaBinarized, numeros)
+        mostrarPlaca(im, resultado)
+    else:
+        print("No se pudieron detectar los valores en la placa")
+        sys.exit()
