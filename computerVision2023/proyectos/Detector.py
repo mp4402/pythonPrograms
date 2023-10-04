@@ -9,6 +9,13 @@ import sys
 import io
 
 def imgview(img, filename = None, k = 13):
+    """function used to show images
+
+    Args:
+        img (numpy array): image to be shown
+        filename (string, optional): name of the image if want to be saved. Defaults to None.
+        k (int, optional): shape of the plot to show. Defaults to 13.
+    """
     fig,ax1 = plt.subplots(figsize=(k,k))
     
     if len(img.shape)==2:
@@ -40,18 +47,43 @@ def imgnorm(img):
     return normalized
 
 def encontrarContornos(image):
+    """function used to find the contours of an image
+
+    Args:
+        image (numpy array): binarized image in which the contours will be found
+
+    Returns:
+        list: list with the contours that open cv findContours function return
+    """
     mode = cv.RETR_TREE 
     method = [cv.CHAIN_APPROX_NONE, cv.CHAIN_APPROX_SIMPLE]
     contours, hierarchy = cv.findContours(image, mode, method[0])
     return contours
 
 def binarizarPlaca(image):
+    """function that binarized the image of the plate
+
+    Args:
+        image (numpy array): image of the plate
+
+    Returns:
+        numpy array: image of the plate processed and binarized
+    """
     imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     normalized = imgnorm(imgray)
     binarized = cv.adaptiveThreshold(normalized, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY,127,0)
     return binarized
 
 def encontrarPlaca(image):
+    """function used to identify the plate in the original image
+
+    Args:
+        image (numpy array): original image in which the plate will be identified
+
+    Returns:
+        numpy array: original image sliced with the shape of the plate
+        list: values of x,y,w,h of the plate found
+    """
     imgray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     normalized = imgnorm(imgray)
     binarized = cv.adaptiveThreshold(normalized, 255, cv.ADAPTIVE_THRESH_GAUSSIAN_C, cv.THRESH_BINARY_INV,11,2)
@@ -81,6 +113,14 @@ def encontrarPlaca(image):
     return placa, caracteristicas
 
 def encontrarNumeros(image):
+    """function that identifies the alphanumeric characters in the plate using opencv contours
+
+    Args:
+        image (numpy array): image of the plate
+
+    Returns:
+        dictionary: dictionary with the values of x,y,w,h from every alphanumeric chareacters identified
+    """
     contours = encontrarContornos(image)
     contorno = []
     extent = 0
@@ -149,6 +189,15 @@ def encontrarNumeros(image):
     return direcciones_y
 
 def modelo(placa, numeros):
+    """function used to detect the values of the plate with a logistic regression model
+
+    Args:
+        placa (numpy array): image of the plate to be sliced to obtain the alphanumeric values
+        numeros (dictionary): dictionary with the values of x,y,w,h of the characters of the plate
+
+    Returns:
+        string: final string with the return values of the model
+    """
     characters = []
     resultado = ""
     linea_placa = list(placa[int(caracteristicas[3]/2),:])
@@ -171,6 +220,12 @@ def modelo(placa, numeros):
     return resultado
 
 def mostrarPlaca(image, resultado):
+    """function used to show the final image with the square over the plate and the plate serial
+
+    Args:
+        image (numpy array): original image to be drawn on
+        resultado (string): text that contains the plate alphanumeric values
+    """
     color = (0,255,0)
 
     print("La placa es: " + str(resultado))
@@ -184,20 +239,28 @@ def mostrarPlaca(image, resultado):
     imgview(image)
 
 if __name__ == "__main__":
+    # the path of the image is received in console
     ap = argparse.ArgumentParser()
     ap.add_argument("--p", type=str, required=True,
         help="path to image plot")
     args = vars(ap.parse_args())
     
+    # the model is loaded
     loaded_model = pickle.load(open('modelo.sav', 'rb'))
 
+    # read the image
     im = cv.imread(args["p"], cv.IMREAD_COLOR)
     im = cv.cvtColor(im, cv.COLOR_BGR2RGB)
+    # find the plate
     placa, caracteristicas = encontrarPlaca(im)
+    # if the plate can´t be found the program will quit
     if len(caracteristicas) == 0:
         sys.exit()
+    # binarize the image of the plate
     placaBinarized = binarizarPlaca(placa)
+    # find the alphanumeric characters in the plate
     numeros = encontrarNumeros(placaBinarized)
+    # if the characters can´t be found, the program will quit, otherwise, the characters will be send to the model and shown to the client
     if len(numeros) > 0:
         resultado = modelo(placaBinarized, numeros)
         mostrarPlaca(im, resultado)
