@@ -136,7 +136,7 @@ def encontrarNumeros(image):
         approx = cv.approxPolyDP(c,epsilon,True)
         x,y,w,h = cv.boundingRect(c)
         area = cv.contourArea(approx)
-        if (w<h and area > area_min and h > altura_min):
+        if (w<h and area > area_min):
             contorno.append(c)
             if (y in direcciones_y):
                 direcciones_y[y].append([x,y,w,h,len(contorno)-1])
