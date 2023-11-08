@@ -101,8 +101,8 @@ def threadBoth(source=0):
 if __name__ == '__main__':
 
     filename = "C:/GitHub/pythonPrograms/computerVision2023/clases/imagenes/maldives.mp4"
-    src = filename
-    # src = 0
+    # src = filename
+    src = 0
     
     
     # noThreading(src)
